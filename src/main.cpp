@@ -25,7 +25,7 @@ int main()
     std::cout << WINDOW_NAME << std::endl;
 
     if (window == NULL) {
-        fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
+        fprintf(stderr, "Failed to open GLFW window.\n");
         glfwTerminate();
         return -1;
     }
@@ -35,7 +35,7 @@ int main()
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        frprintf(stderr, "Failed to Initialize GLAD.\n");
         return -1;
     }
 
