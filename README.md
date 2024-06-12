@@ -1,15 +1,31 @@
 # cgns24-renderer
 This repository contains the source files for the 3D Renderer implemented under the Summer 2024 Offering of the Computer Graphics and Shaders Project under Game Development Club, SnT Council, IIT Kanpur.
 
-### Instructions
+## Task-0
 
-The project directory contains a `CMakeLists.txt` that contains the build configuration for our project. It is recommended to use Visual Studio 2019 or later (the above project is maintained on Visual Studio 2022).
-After cloning the repo, please run the following commands (replace `17 2022` with `16 2019` for VS 2019)
+- [ ] Modify GLFW window flags for the following features:
+  - [ ] Application starts in fullscreen mode
+  - [ ] Fixed Aspect Ration on resizing window
+  - [ ] Minimum and Maximum resolution
+ 
+- [ ] Modify input detection so that:
+  - [ ] Pressing R varies red value of background colour with time
+  - [ ] Pressing G varies green value of background colour with time
+  - [ ] Pressing B varies blue value of background colour with time.
 
-```
-mkdir out
-cd out
-cmake ../ -G"Visual Studio 17 2022" ${COMMON_CMAKE_CONFIG_PARAMS}
-```
+- [ ] Draw two triangles with only one common vertex using two different vertex array. Also make the second triangle a different color.
 
-This would generate the build files for our project with the executable in `/out/Debug` folder. You can open the `.sln` file in Visual Studio and directly build after the initial `cmake` run. (Visual Studio itself runs the `cmake` on its own)
+### Instructions for submissions:
+- Fork this repo if you have not already.
+- Clone YOUR forked repo to your local machine.
+- Checkout to the Task-0 branch.
+- Finish tasks given above and commit.
+- Push the commits to the Task-0 branch of YOUR origin
+- Send a PR to the Task-0 branch of upstream. (upstream is the original repo)
+
+### The final output should somewhat look like this
+
+
+| Final | Final |
+| --- | --- |
+![image](https://github.com/npqr/cgns24-renderer/assets/96120993/9af90e67-3ef6-4514-826f-c8680df5c08c) | ![image](https://github.com/npqr/cgns24-renderer/assets/96120993/78412538-6cdc-4f72-b5d1-efacf7d55b45) |
