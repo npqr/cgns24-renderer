@@ -1,88 +1,205 @@
 #include <iostream>
-#include "config.h"
-#include "renderer.h"
-#include "shader.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-Renderer renderer;
-VertexArray varray;
+float red = 0.2f;
+float green = 0.0f;
+float blue = 0.3f;
 
-// Vertex Data
+float redChange = 0.0f;
+float greenChange = 0.0f;
+float blueChange = 0.0f;
 
-float vertices[] = {
-    -0.5f, 0.5f, 0.0f,
-    0.5f, 0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f };
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 
-unsigned int indices[] = {
-    0, 1, 2,
-    2, 3, 0 };
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        redChange = (redChange == 0.0f) ? 0.01f : 0.0f;  
+    }
+    if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+        greenChange = (greenChange == 0.0f) ? 0.01f : 0.0f;  
+    }
+    if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+        blueChange = (blueChange == 0.0f) ? 0.01f : 0.0f;  
+    }
 
-int main()
-{
-    // Initialise GLFW, and if it doesn't raise error
-    renderer.initialise_glfw();
-    if (!renderer.create_window())
-    {
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+        if (glfwGetWindowMonitor(window) != NULL) {
+            
+            glfwSetWindowMonitor(window, nullptr, 100, 100, 800, 600, GLFW_DONT_CARE);
+        }
+        else {
+           
+            GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+            glfwSetWindowMonitor(window, primaryMonitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        }
+    }
+}
+
+
+void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+   
+    int minWidth = 640;
+    int minHeight = 480;
+    int maxWidth = 1280;
+    int maxHeight = 720;
+
+    width = (width < minWidth) ? minWidth : (width > maxWidth) ? maxWidth : width;
+    height = (height < minHeight) ? minHeight : (height > maxHeight) ? maxHeight : height;
+
+    glfwSetWindowSize(window, width, height);
+    glViewport(0, 0, width, height);
+}
+//Vertex Shader source code. 
+const char* vertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 ourColor;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(aPos, 1.0);\n"
+"   ourColor = aColor;\n"
+"}\0";
+//Fragment Shader source code. 
+const char* fragmentShaderSource = "#version 330 core\n"
+"in vec3 ourColor;\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(ourColor, 1.0);\n"
+"}\n\0";
+
+int main() {
+    glfwInit();
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    if (!primaryMonitor) {
+        std::cerr << "Failed to get primary monitor" << std::endl;
+        return -1;
+    }
+    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+    if (!mode) {
+        std::cerr << "Failed to get video mode" << std::endl;
         return -1;
     }
 
-    // Setup Window
-    renderer.setup_window_data();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Import Shaders 
-    Shader shader("../src/shaders/defaultVec.vs", "../src/shaders/defaultFrag.fs");
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Yash", primaryMonitor, nullptr);
+    if (window == nullptr) {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    // Generation and binding of buffers
-    varray.generate_buffers();
-    varray.bind_vao();
+    gladLoadGL();
 
-    // no. of vertices, stride, ptr to vertex data
-    varray.bind_vbo(4, 3 * sizeof(float), vertices);
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+    glViewport(0, 0, screenWidth, screenHeight);
 
-    // no. of indices, ptr to indices array
-    varray.bind_ebo(6, indices);
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    glCompileShader(vertexShader);
 
-    // set for layout 0 (position) with stride 3
-    varray.set_attribute_array(0, 3, 3 * sizeof(float));
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
 
-    // we can bind later when needed to render
-    varray.unbind_vbo();
-    varray.unbind_vao();
+    GLuint shaderProgram = glCreateProgram();
 
-    // for time dependent stuff
-    renderer.start_timer(); 
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
 
-    while (!renderer.close_window())
-    {
-        renderer.new_frame();
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 
-        // current deltaTime & fps
-        std::cout << renderer.deltaTime << " " << (int)(1.0f / renderer.deltaTime) << std::endl;
+    GLuint VAO, VBO, EBO;
 
-        if (renderer.check_key(GLFW_KEY_ESCAPE))
-        {
-            glfwSetWindowShouldClose(renderer.window, true);
-        }
-        if (renderer.check_key(GLFW_KEY_R))
-        {
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else {
-            glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
-        }
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, 0.0f,  0.8f, 0.3f, 0.02f, 
+        -0.5f,  0.5f, 0.0f,  0.8f, 0.3f, 0.02f, 
+         0.0f,  0.0f, 0.0f,  0.8f, 0.3f, 0.02f, 
+         0.5f, -0.5f, 0.0f,  1.0f, 0.75f, 0.8f, 
+         0.5f,  0.5f, 0.0f,  1.0f, 0.75f, 0.8f, 
+         0.0f,  0.0f, 0.001f,  1.0f, 0.75f, 0.8f 
+    };
 
+    GLuint indices[] = {
+        0, 1, 2,
+        3, 4, 5,
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    while (!glfwWindowShouldClose(window)) {
+        
+        red += redChange;
+        green += greenChange;
+        blue += blueChange;
+
+        
+        if (red > 1.0f) red = 0.0f;
+        if (green > 1.0f) green = 0.0f;
+        if (blue > 1.0f) blue = 0.0f;
+
+        glClearColor(red, green, blue, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Use the current shader program
-        shader.use();
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        varray.draw_indices(6);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
 
-        // End of Frame
-        renderer.swap_buffers(false);
+        
+        int newScreenWidth, newScreenHeight;
+        glfwGetFramebufferSize(window, &newScreenWidth, &newScreenHeight);
+        if (newScreenWidth != screenWidth || newScreenHeight != screenHeight) {
+            screenWidth = newScreenWidth;
+            screenHeight = newScreenHeight;
+            glViewport(0, 0, screenWidth, screenHeight);
+        }
     }
 
-    renderer.terminate_glfw();
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteProgram(shaderProgram);
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
     return 0;
 }
