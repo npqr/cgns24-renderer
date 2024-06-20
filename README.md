@@ -14,7 +14,7 @@ This repository contains the source files for the 3D Renderer implemented under 
   - [ ] The end result should be something like:
     - At $t = 0$, corners are colored with set 1: $(C_1, C_2, C_3, C_4)$
     - At $t = \dfrac{T}{2}$, corners are colored with set 2: $(C_5, C_6, C_7, C_8)$
-    - At$t = T$, corners are colored back to set 1: $(C_1, C_2, C_3, C_4)$
+    - At $t = T$, corners are colored back to set 1: $(C_1, C_2, C_3, C_4)$
 - [ ] ShaderToy : 
   - [ ] Make a checker-board in shadertoy/or simple `.fs` file
 - [ ] Texture : 
@@ -30,6 +30,7 @@ This repository contains the source files for the 3D Renderer implemented under 
 - Fork this repo if you have not already.
 - Clone YOUR forked repo to your local machine.
 - Checkout to the Task-1 branch.
+- *You can use your code from Task-0.*
 - Finish tasks given above and commit.
 - Push the commits to the Task-1 branch of YOUR origin
 - Send a PR to the Task-1 branch of upstream. (upstream is the original repo)
@@ -47,5 +48,5 @@ This repository contains the source files for the 3D Renderer implemented under 
 |  Multi-texture  |  VSync  |   .  |
 |![7](https://github.com/npqr/cgns24-renderer/assets/96120993/c2361697-b643-4126-8dfd-f5a3eb72cb80)|![8](https://github.com/npqr/cgns24-renderer/assets/96120993/77546420-c33b-486c-ae0f-cf469ed4cbc9)
   |  .   |
-| t = 0 ->T/3 | t = T/3 -> 2T/3 | t = 2T/3 -> T |
+| $t = 0 \to \frac{T}{3}$ | $t = \frac{T}{3} \to \frac{2T}{3}$ | $t = \frac{2T}{3} \to T$ |
 | ![9](https://github.com/npqr/cgns24-renderer/assets/96120993/3b668722-bf66-466a-a060-5e602e6e52e4) | ![10](https://github.com/npqr/cgns24-renderer/assets/96120993/7d4ffe0d-39b0-4bf2-9203-276b23a003a7)| ![11](https://github.com/npqr/cgns24-renderer/assets/96120993/3de59dbd-5db3-4fde-80bb-948f886bcdbc)|
