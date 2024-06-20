@@ -9,7 +9,7 @@ This repository contains the source files for the 3D Renderer implemented under 
   - [ ] Define multiple color sets for the corners of the rectangle.
   - [ ] Define a time period for a complete cycle $T$ and the current time in the cycle $t$.
   - [ ] Load all the variables (colors, time period $T$, current time $t$ as `uniform`s to the shader.
-  - [ ] Use [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation) to smoothly transition between the colors based on the current time.
+  - [ ] Use [bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation) for interpolating colours to all the points in the rectangle using the colours of the vertices of rectangle. You can use linear interpolation to smoothly transition between the colors based on the current time.
   - [ ] Allow the user to control the morphing speed via a UI slider.
   - [ ] The end result should be something like:
     - At $t = 0$, corners are colored with set 1: $(C_1, C_2, C_3, C_4)$
